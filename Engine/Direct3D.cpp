@@ -160,10 +160,10 @@ HRESULT Direct3D::InitShader()
 	{
 		return E_FAIL;
 	}
-	if (FAILED(InitShaderPointLight()))
-	{
-		return E_FAIL;
-	}
+	//if (FAILED(InitShaderPointLight()))
+	//{
+	//	return E_FAIL;
+	//}
 	if (FAILED(InitToonShader()))
 	{
 		return E_FAIL;
