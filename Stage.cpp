@@ -69,6 +69,8 @@ void Stage::Update()
     {
         Model::ToggleRenderState();
     }
+    transform_.rotate_.y += 0.5f;
+    trDonuts.rotate_.y += 0.5f;
    
     if (Input::IsKey(DIK_RIGHT))
     {
@@ -119,8 +121,7 @@ void Stage::Update()
     cb.lightPosition = lightSourcePosition_;
     XMStoreFloat4(&cb.eyePos, Camera::GetEyePosition());
 
-    Direct3D::pContext_->UpdateSubresource(pCBStageScene_,
-        0, NULL, &cb, 0, 0);
+    Direct3D::pContext_->UpdateSubresource(pCBStageScene_, 0, NULL, &cb, 0, 0);
 
     Direct3D::pContext_->VSSetConstantBuffers(1, 1, &pCBStageScene_);	//頂点シェーダー用	
     Direct3D::pContext_->PSSetConstantBuffers(1, 1, &pCBStageScene_);	//ピクセルシェーダー用
