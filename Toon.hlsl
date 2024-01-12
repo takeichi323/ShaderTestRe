@@ -24,8 +24,8 @@ cbuffer gmodel:register(b1)
 
 struct PS_IN
 {
-	float4 pos  : SV_POSITION;	//位置
-	float2 uv	: TEXCOORD;		//UV座標
+	float4 pos      :SV_POSITION;	//位置
+	float2 uv	    :TEXCOORD;		//UV座標
 	float4 eyev		:POSITION1;
 	float4 normal	:POSITION2;
 	float4 light	:POSITION3;
