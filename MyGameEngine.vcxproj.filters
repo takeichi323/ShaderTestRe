@@ -24,6 +24,7 @@
     <FxCompile Include="Simple3D.hlsl" />
     <FxCompile Include="Simple2D.hlsl" />
     <FxCompile Include="Toon.hlsl" />
+    <FxCompile Include="NormalMapping.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
