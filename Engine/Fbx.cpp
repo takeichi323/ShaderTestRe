@@ -97,6 +97,18 @@ void Fbx::InitVertex(fbxsdk::FbxMesh* mesh)
 		}
 	}
 
+	for (int i = 0; i < polygonCount_; i++)
+	{
+		int sIndex = mesh->GetPolygonVertexIndex(i);
+		FbxGeometryElementTangent* t = mesh->GetElementTangent(0);
+		FbxVector4 tangent = t->GetDirectArray().GetAt(sIndex).mData;
+		for (int j = 0; j < 3; j++)
+		{
+			int index = mesh->GetPolygonVertices()[sIndex+j];
+			vertices[index].tangent=XMVectorSet((float)tangent[0], (float)tangent[2], (float)tangent[3], (float)tangent[4], )
+		}
+	}
+
 	//頂点バッファ
 	HRESULT hr;
 	D3D11_BUFFER_DESC bd_vertex;
@@ -256,6 +268,8 @@ void Fbx::InitMaterial(fbxsdk::FbxNode* pNode)
 	}
 }
 
+//関数追加1コマ目
+
 void Fbx::Draw(Transform& transform)
 {
 	if (state_ == RENDER_DIRLIGHT)
@@ -317,7 +331,14 @@ void Fbx::Draw(Transform& transform)
 			ID3D11ShaderResourceView* pSRV = pMaterialList_[i].pTexture->GetSRV();
 			Direct3D::pContext_->PSSetShaderResources(0, 1, &pSRV);
 		}
+		if (pMaterialList_[i].pNomalTexure)
+		{
+			ID3D11ShaderResourceView* pSRV = pMaterialList_[i].pTexture->GetSRV();
+			Direct3D::pContext_->PSSetShaderResources(2, 1, &pSRV);
+		}
 
+		ID3D11ShaderResourceView* pSRV = pMaterialList_[i].pTexture->GetSRV();
+		Direct3D::pContext_->PSSetShaderResources(1, 1, &pSRVToon);
 		//描画
 		Direct3D::pContext_->DrawIndexed(indexCount_[i], 0, 0);
 	}

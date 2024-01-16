@@ -393,11 +393,11 @@ HRESULT Direct3D::InitNormalMap()
 	HRESULT hr;
 	// 頂点シェーダの作成（コンパイル）
 	ID3DBlob* pCompileVS = nullptr;
-	D3DCompileFromFile(L"Simple3D.hlsl", nullptr, nullptr, "VS", "vs_5_0", NULL, 0, &pCompileVS, NULL);
+	D3DCompileFromFile(L"NormalMapping.hlsl", nullptr, nullptr, "VS", "vs_5_0", NULL, 0, &pCompileVS, NULL);
 	assert(pCompileVS != nullptr); //ここはassertionで処理
 
 	hr = pDevice_->CreateVertexShader(pCompileVS->GetBufferPointer(), pCompileVS->GetBufferSize(),
-		NULL, &(shaderBundle[SHADER_3D].pVertexShader_));
+		NULL, &(shaderBundle[SHADER_NORMALMAP].pVertexShader_));
 	if (FAILED(hr))
 	{
 		//エラー処理
@@ -408,12 +408,13 @@ HRESULT Direct3D::InitNormalMap()
 
 	//頂点インプットレイアウト
 	D3D11_INPUT_ELEMENT_DESC layout[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },	//位置
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(DirectX::XMVECTOR) , D3D11_INPUT_PER_VERTEX_DATA, 0 },//UV座標
-		{ "NORMAL",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(DirectX::XMVECTOR) * 2 ,	D3D11_INPUT_PER_VERTEX_DATA, 0 },//法線
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,  0, sizeof(DirectX::XMVECTOR) * 0 , D3D11_INPUT_PER_VERTEX_DATA, 0  },	//位置
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,     0, sizeof(DirectX::XMVECTOR) * 1 , D3D11_INPUT_PER_VERTEX_DATA, 0 },    //UV座標
+		{ "NORMAL",	  0, DXGI_FORMAT_R32G32B32_FLOAT,  0, sizeof(DirectX::XMVECTOR) * 2 , D3D11_INPUT_PER_VERTEX_DATA, 0 },   //法線
+		{ "TAGENT",	  0, DXGI_FORMAT_R32G32B32_FLOAT,  0, sizeof(DirectX::XMVECTOR) * 3 , D3D11_INPUT_PER_VERTEX_DATA, 0 },  //法線
 	};
-	hr = pDevice_->CreateInputLayout(layout, 3, pCompileVS->GetBufferPointer(), pCompileVS->GetBufferSize(),
-		&(shaderBundle[SHADER_3D].pVertexLayout_));
+	hr = pDevice_->CreateInputLayout(layout, sizeof(layout)/sizeof(D3D11_INPUT_ELEMENT_DESC), pCompileVS->GetBufferPointer(), pCompileVS->GetBufferSize(),
+		&(shaderBundle[SHADER_NORMALMAP].pVertexLayout_));
 	if (FAILED(hr))
 	{
 		//エラー処理
@@ -426,7 +427,7 @@ HRESULT Direct3D::InitNormalMap()
 
 	// ピクセルシェーダの作成（コンパイル）
 	ID3DBlob* pCompilePS = nullptr;
-	D3DCompileFromFile(L"Simple3D.hlsl", nullptr, nullptr, "PS", "ps_5_0", NULL, 0, &pCompilePS, NULL);
+	D3DCompileFromFile(L"NormalMapping.hlsl", nullptr, nullptr, "PS", "ps_5_0", NULL, 0, &pCompilePS, NULL);
 	assert(pCompilePS != nullptr);
 
 	hr = pDevice_->CreatePixelShader(pCompilePS->GetBufferPointer(), pCompilePS->GetBufferSize(), NULL, &(shaderBundle[SHADER_3D].pPixelShader_));
