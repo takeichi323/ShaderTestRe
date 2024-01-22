@@ -17,6 +17,8 @@ cbuffer gmodel:register(b0)
 	float4      ambientColor;   //環境光
 	float4      specularColor;  //鏡面反射＝ハイライト
 	float       shininess;
+	int         hasTexture;
+	int         hasNormalMap;
 	bool		isTextured;			//テクスチャーが貼られているかどうか
 
 };
@@ -44,7 +46,7 @@ struct VS_OUT
 //───────────────────────────────────────
 // 頂点シェーダ
 //───────────────────────────────────────
-VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL)
+VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL,float4 U)
 {
 	//ピクセルシェーダーへ渡す情報
 	VS_OUT outData = (VS_OUT)0;

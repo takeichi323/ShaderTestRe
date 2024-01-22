@@ -97,15 +97,18 @@ void Fbx::InitVertex(fbxsdk::FbxMesh* mesh)
 		}
 	}
 
+	FbxGeometryElementTangent* t = mesh->GetElementTangent(0);
 	for (int i = 0; i < polygonCount_; i++)
 	{
+		FbxVector4 tangent{ 0,0,0,0 };
 		int sIndex = mesh->GetPolygonVertexIndex(i);
-		FbxGeometryElementTangent* t = mesh->GetElementTangent(0);
-		FbxVector4 tangent = t->GetDirectArray().GetAt(sIndex).mData;
+		if (t) {
+			FbxVector4 tangent = t->GetDirectArray().GetAt(sIndex).mData;
+		}
 		for (int j = 0; j < 3; j++)
 		{
 			int index = mesh->GetPolygonVertices()[sIndex+j];
-			vertices[index].tangent=XMVectorSet((float)tangent[0], (float)tangent[2], (float)tangent[3], (float)tangent[4], )
+			vertices[index].tangent = XMVectorSet((float)tangent[0], (float)tangent[1], (float)tangent[2], 0.0f);
 		}
 	}
 
@@ -272,10 +275,12 @@ void Fbx::InitMaterial(fbxsdk::FbxNode* pNode)
 
 void Fbx::Draw(Transform& transform)
 {
-	if (state_ == RENDER_DIRLIGHT)
+	/*if (state_ == RENDER_DIRLIGHT)
 		Direct3D::SetShader(SHADER_TOON);
 	else
-		Direct3D::SetShader(SHADER_POINT);
+		Direct3D::SetShader(SHADER_POINT);*/
+
+	Direct3D::SetShader(SHADER_NORMALMAP);
 
 	transform.Calclation();//トランスフォームを計算
 
@@ -331,14 +336,14 @@ void Fbx::Draw(Transform& transform)
 			ID3D11ShaderResourceView* pSRV = pMaterialList_[i].pTexture->GetSRV();
 			Direct3D::pContext_->PSSetShaderResources(0, 1, &pSRV);
 		}
-		if (pMaterialList_[i].pNomalTexure)
+		if (pMaterialList_[i].pNormalmap)
 		{
-			ID3D11ShaderResourceView* pSRV = pMaterialList_[i].pTexture->GetSRV();
+			ID3D11ShaderResourceView* pSRV = pMaterialList_[i].pNormalmap->GetSRV();
 			Direct3D::pContext_->PSSetShaderResources(2, 1, &pSRV);
 		}
 
-		ID3D11ShaderResourceView* pSRV = pMaterialList_[i].pTexture->GetSRV();
-		Direct3D::pContext_->PSSetShaderResources(1, 1, &pSRVToon);
+		/*ID3D11ShaderResourceView* pSRV = pMaterialList_[i].pTexture->GetSRV();
+		Direct3D::pContext_->PSSetShaderResources(1, 1, &pSRVToon);*/
 		//描画
 		Direct3D::pContext_->DrawIndexed(indexCount_[i], 0, 0);
 	}

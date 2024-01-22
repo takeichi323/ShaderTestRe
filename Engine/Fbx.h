@@ -29,6 +29,7 @@ class Fbx
 	{
 		Texture* pTexture;
 		Texture* pNormalTexure;
+		Texture* pNormalmap;
 		XMFLOAT4 diffuse;
 		XMFLOAT4 ambient;
 		XMFLOAT4 specular;
@@ -44,7 +45,8 @@ class Fbx
 		XMFLOAT4	ambientColor;
 		XMFLOAT4	specularColor;
 		FLOAT		shininess;
-		BOOL		isTextured;
+		BOOL		hasTextured;
+		BOOL        hasNormalMap;
 	};
 
 	struct VERTEX
