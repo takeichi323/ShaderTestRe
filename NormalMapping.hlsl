@@ -19,7 +19,6 @@ cbuffer gmodel:register(b0)
 	float       shininess;
 	int         hasTexture;
 	int         hasNormalMap;
-	bool		isTextured;			//テクスチャーが貼られているかどうか
 
 };
 
@@ -38,15 +37,17 @@ struct VS_OUT
 {
 	float4 pos  : SV_POSITION;	//位置
 	float2 uv	: TEXCOORD;		//UV座標
-	float4 color	: COLOR;	//色（明るさ）
 	float4 eyev		:POSITION;
-	float4 normal	:NORMAL;
+	float4 Neyev    :POSITION1;
+	float4 normal	:POSITION2;
+	float4 light    :POSITION3;
+	float4 color    :POSITION4;
 };
 
 //───────────────────────────────────────
 // 頂点シェーダ
 //───────────────────────────────────────
-VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL,float4 U)
+VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL,float4 tangent:TANGENT)
 {
 	//ピクセルシェーダーへ渡す情報
 	VS_OUT outData = (VS_OUT)0;
@@ -54,13 +55,32 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL,fl
 	//ローカル座標に、ワールド・ビュー・プロジェクション行列をかけて
 	//スクリーン座標に変換し、ピクセルシェーダーへ
 	outData.pos = mul(pos, matWVP);
-	outData.uv = uv;
+	outData.uv = (float2)uv;
+
+	float3 binormal = cross(normal, tangent);
+
 	normal.w = 0;
 	normal = mul(normal, matNormal);
 	normal = normalize(normal);
 	outData.normal = normal;
 
+	tangent.w = 0;
+	tangent = mul(tangent, matNormal);
+	tangent = normlize(tangent);
+
+	binormal = mul(binormal, matNormak);
+	binormal = normalize(tangent);
+
+	float4 posw = mul(pos, matW);
+	outData.eyev = normalize(posw - eyePosition);
+
+	outData.Neyev.x = dot(outData.eye,tagent);
+	outData.Neyev.y = dot(outData.binormal);
+	outData.Neyev.z = dot(outData.normal);
+	outData.Neyev.w = 0;
+
 	float4 light = normalize(lightPosition);
+	light.w = 0;
 	light = normalize(light);
 
 	outData.color = saturate(dot(normal, light));
