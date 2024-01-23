@@ -24,8 +24,8 @@ cbuffer gmodel:register(b1)
 
 struct PS_IN
 {
-	float4 pos      :SV_POSITION;	//位置
-	float2 uv	    :TEXCOORD;		//UV座標
+	float4 pos  : SV_POSITION;	//位置
+	float2 uv	: TEXCOORD;		//UV座標
 	float4 eyev		:POSITION1;
 	float4 normal	:POSITION2;
 	float4 light	:POSITION3;
@@ -35,14 +35,14 @@ struct PS_IN
 //───────────────────────────────────────
 // 頂点シェーダ
 //───────────────────────────────────────
-PS_IN VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL)
+PS_IN VS(float4 pos : POSITION, float2 uv : TEXCOORD, float4 normal : NORMAL)
 {
 	//ピクセルシェーダーへ渡す情報
 	PS_IN outData = (PS_IN)0;
 
 	outData.pos = mul(pos, matWVP);
 	//outData.pos = pos;
-	outData.uv = uv;
+	outData.uv = (float2)uv;
 	float4 normalout;
 	normalout = mul(normal, matNormal);
 	normalout.w = 0;
@@ -67,7 +67,7 @@ float4 PS(PS_IN inData) : SV_Target
 	float NL = saturate(dot(inData.normal, inData.light));
 	float k = 1.0f / (1.0 * len * len);
 
-	float3 reflect = normalize(2 * NL * inData.normal - inData.light);
+	float4 reflect = normalize(2 * NL * inData.normal - inData.light);
 	float4 specular = pow(saturate(dot(reflect, inData.eyev)), 8);
 
 
