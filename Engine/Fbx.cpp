@@ -300,7 +300,8 @@ void Fbx::Draw(Transform& transform)
 		//XMStoreFloat4(&cb.eyePos,Camera::GetEyePosition());
 		//int n = (int)(pMaterialList_[i].pTexture != nullptr);
 		//cb.isTextured = { n,n,n,n };
-		cb.isTextured = pMaterialList_[i].pTexture != nullptr;
+		cb.hasTexture = pMaterialList_[i].pTexture != nullptr;
+		cb.hasNormalMap = pMaterialList_[i].pNormalmap != nullptr;
 
 
 		//D3D11_MAPPED_SUBRESOURCE pdata;

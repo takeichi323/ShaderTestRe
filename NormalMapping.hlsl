@@ -37,8 +37,8 @@ cbuffer gmodel:register(b1)
 //───────────────────────────────────────
 struct VS_OUT
 {
-	float4 pos  : SV_POSITION;	//位置
-	float2 uv	: TEXCOORD;		//UV座標
+	float4 pos      :SV_POSITION;	//位置
+	float2 uv	    :TEXCOORD;		//UV座標
 	float4 eyev		:POSITION;
 	float4 Neyev    :POSITION1;
 	float4 normal	:POSITION2;
@@ -59,15 +59,19 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL,fl
 	outData.pos = mul(pos, matWVP);
 	outData.uv = (float2)uv;
 
-	float3 binormal = cross(normal, tangent);
+	float3  tmp = cross(tangent, normal);
+	float4 binormal = { tmp, 0 };
+	binormal = mul(binormal, matNormal);
+	binormal = normalize(binormal); //従法線ベクトルをローカル座標に変換したやつ
 
 	normal.w = 0;
-	normal = mul(normal, matNormal);
+	/*normal = mul(normal, matNormal);
 	normal = normalize(normal);
-	outData.normal = normal;
+	outData.normal = normal;*/
+	outData.normal = normalize(mul(normal, matNormal));
 
-	tangent.w = 0;
 	tangent = mul(tangent, matNormal);
+	tangent.w = 0;
 	tangent = normalize(tangent);
 
 	binormal = mul(binormal, matNormal);
@@ -105,38 +109,36 @@ float4 PS(VS_OUT inData) : SV_Target
 	float4 lightSource = float4(1.0, 1.0, 1.0, 1.0);
 	float4 diffuse;
 	float4 ambient;
+	float4 specular;
 
 	if (hasNormalMap)
 	{
 		/*diffuse = lightSource * diffuseColor * inData.color;
 		ambient = lightSource * diffuseColor * ambentSource;*/
 		float4 tmpNormal = normalTex.Sample(g_sampler, inData.uv) * 2.0f - 1.0f;
-		tmpNormal.w = 0;
 		tmpNormal = normalize(tmpNormal);
+		tmpNormal.w = 0;
 	
 		float4 NL = clamp(dot(tmpNormal, inData.light), 0, 1);
-
-
 		float4 reflection = reflect(-inData.light, tmpNormal);
 		float4 specular=pow(saturate(dot(reflection, inData.Neyev)), shininess) * specularColor
 
 		if(hasTexture != 0)
 		{
-			diffuse = g_texture.Sample(g_sampler, inData.uv) * NL;
-			ambient = g_texture.Sample(g_sampler, inData.uv) * ambientColor;
+			diffuse = lightSource * g_texture.Sample(g_sampler, inData.uv) * NL;
+			ambient = lightSource * g_texture.Sample(g_sampler, inData.uv) * ambientColor;
 		}
 		else
 		{
-			diffuse = diffuseColor * NL;
-			ambient = diffuseColor * ambientColor;
+			diffuse = lightSource * diffuseColor * NL;
+			ambient = lightSource * diffuseColor * ambientColor;
 		}
-		return   specular;
+		return   diffuse + ambient + specular;
 
 	}
 	else
 	{
 		float4 reflection = reflect(normalize(lightPosition), inData.normal);
-
 		float4 specular = pow(saturate(dot(normalize(reflection), inData.eyev)), shininess) * specularColor;
 		if (hasTexture == 0)
 		{
@@ -148,9 +150,9 @@ float4 PS(VS_OUT inData) : SV_Target
 			diffuse = lightSource * g_texture.Sample(g_sampler, inData.uv) * inData.color;
 			ambient = lightSource * g_texture.Sample(g_sampler, inData.uv) * ambientColor;
 		}
-		return specular;
+		return diffuse + ambient + specular;
 	}
 }
 
 	//return g_texture.Sample(g_sampler, inData.uv);
-}
+
