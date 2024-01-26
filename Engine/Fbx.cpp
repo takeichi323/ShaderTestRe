@@ -235,10 +235,6 @@ void Fbx::InitMaterial(fbxsdk::FbxNode* pNode)
 			FbxDouble shininess = pPhong->Shininess;
 			pMaterialList_[i].shininess = (float)shininess;
 		}
-
-
-
-
 		//テクスチャ情報
 		FbxProperty  lProperty = pMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
 
