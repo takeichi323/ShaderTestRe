@@ -267,7 +267,7 @@ void Fbx::InitMaterial(fbxsdk::FbxNode* pNode)
 	}
 }
 
-//ŠÖ”’Ç‰Á1ƒRƒ}–Ú
+
 
 void Fbx::Draw(Transform& transform)
 {

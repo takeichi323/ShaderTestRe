@@ -80,9 +80,9 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL,fl
 	float4 posw = mul(pos, matW);
 	outData.eyev = normalize(posw - eyePosition);
 
-	outData.Neyev.x = dot(outData.eyev, tangent);//接空間の視線ベクトル
-	outData.Neyev.y = dot(outData.eyev, binormal);
-	outData.Neyev.z = dot(outData.eyev, normal);
+	outData.light.x = dot(light, tangent);//接空間の光源ベクトル
+	outData.light.y = dot(light, binormal);
+	outData.light.z = dot(light, outData.normal);
 	outData.Neyev.w = 0;
 
 	float4 light = normalize(lightPosition);
