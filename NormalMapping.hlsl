@@ -59,42 +59,32 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL,fl
 	outData.pos = mul(pos, matWVP);
 	outData.uv = (float2)uv;
 
-	float3  tmp = cross(tangent, normal);
-	float4 binormal = { tmp, 0 };
+	float3  binormal = cross(normal, tangent);
 	binormal = mul(binormal, matNormal);
 	binormal = normalize(binormal); //従法線ベクトルをローカル座標に変換したやつ
 
-	normal.w = 0;
-	/*normal = mul(normal, matNormal);
-	normal = normalize(normal);
-	outData.normal = normal;*/
-	outData.normal = normalize(mul(normal, matNormal));
+	outData.normal = normalize(mul(normal, matNormal)); //法線ベクトルをローカル座標に変換したやつ
+	outData.normal.w = 0;
 
-	tangent = mul(tangent, matNormal);
-	tangent.w = 0;
-	tangent = normalize(tangent);
+	float4 eye = normalize(mul(pos, matW) - eyePosition); //ワールド座標の視線ベクトル
+	outData.eyev = eye;
 
-	binormal = mul(binormal, matNormal);
-	binormal = normalize(tangent);
 
-	float4 posw = mul(pos, matW);
-	outData.eyev = normalize(posw - eyePosition);
-
-	outData.light.x = dot(light, tangent);//接空間の光源ベクトル
-	outData.light.y = dot(light, binormal);
-	outData.light.z = dot(light, outData.normal);
+	outData.Neyev.x = dot(eye, tangent);//接空間の視線ベクトル
+	outData.Neyev.y = dot(eye, binormal);
+	outData.Neyev.z = dot(eye, outData.normal);
 	outData.Neyev.w = 0;
 
 	float4 light = normalize(lightPosition);
 	light.w = 0;
 	light = normalize(light);
 
-	outData.color = mul(light, normal);
+	outData.color = mul(light, outData.normal);
 	outData.color.w = 0.0;
 
-	outData.light.x = dot(light, tangent);
+	outData.light.x = dot(light, tangent);//接空間の光源ベクトル
 	outData.light.y = dot(light, binormal);
-	outData.light.z = dot(light, normal);
+	outData.light.z = dot(light, outData.normal);
 	outData.light.w = 0;
 
 	//まとめて出力

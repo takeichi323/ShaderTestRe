@@ -10,7 +10,7 @@ namespace {
 
 void Stage::IntConstantBuffer()
 {
-    D3D11_BUFFER_DESC cb;
+    D3D11_BUFFER_DESC cb{};
     cb.ByteWidth = sizeof(CBUFF_STAGESCENE);
     cb.Usage = D3D11_USAGE_DEFAULT;
     cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -37,14 +37,14 @@ Stage::~Stage()
 void Stage::Initialize()
 {
     //モデルデータのロード
-    hModel_ = Model::Load("assets/Donuts.fbx");
+    hModel_ = Model::Load("assets/ball.fbx");
     hGround_ = Model::Load("assets/Ground.fbx");
-    hLightBall_ = Model::Load("assets/LightBall.fbx");
+    hLightBall_ = Model::Load("assets/RedBall.fbx");
 
     assert(hModel_ >= 0);
     assert(hGround_ >= 0);
     assert(hLightBall_ >= 0);
-    Camera::SetPosition(XMVECTOR{ 0, 10, -20, 0 });
+    Camera::SetPosition(XMVECTOR{ 0, 1, -5, 0 });
     Camera::SetTarget(XMVECTOR{ 0, 2, 0, 0 });
     trDonuts.position_ = { 0, 2, 0 };
     trDonuts.rotate_ = { 0, 0, 0 };
@@ -54,9 +54,9 @@ void Stage::Initialize()
     trGround.rotate_ = { 0, 0, 0 };
     trGround.scale_ = { 10, 10, 10 };
 
-    trLightBall.position_ = { 0, 0, 0 };
+    trLightBall.position_ = { 1, 1, 2 };
     trLightBall.rotate_ = { 0, 0, 0 };
-    trLightBall.scale_ = { 0.4, 0.4, 0.4 };
+    trLightBall.scale_ = { 0.4f, 0.4f, 0.4f };
     Instantiate<Arrow>(this);
     IntConstantBuffer();
 }
@@ -117,7 +117,7 @@ void Stage::Update()
     XMFLOAT4 tmp{ GetLightPos() };
     trLightBall.position_ = { tmp.x, tmp.y,tmp.z };
 
-    CBUFF_STAGESCENE cb;
+    CBUFF_STAGESCENE cb{};
     cb.lightPosition = lightSourcePosition_;
     XMStoreFloat4(&cb.eyePos, Camera::GetEyePosition());
 
