@@ -164,11 +164,11 @@ HRESULT Direct3D::InitShader()
 	//{
 	//	return E_FAIL;
 	//}
-	if (FAILED(InitToonShader()))
+	/*if (FAILED(InitToonShader()))
 	{
 		return E_FAIL;
 	}
-	return S_OK;
+	return S_OK;*/
 
 
 }
