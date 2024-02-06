@@ -11,6 +11,8 @@ SamplerState	g_sampler : register(s0);	//サンプラー
 cbuffer global
 {
 	float4x4	matW;			// ワールド行列
+
+	float4 g_scroll; //スクロール量の変数
 };
 
 //───────────────────────────────────────
@@ -46,5 +48,7 @@ float4 PS(VS_OUT inData) : SV_Target
 {
 	float4 output;
 	output = g_texture.Sample(g_sampler, inData.uv) * inData.uv.y;
+	//float2 tmpUV=inData.uv;
+	//tmpUV.x=tmpUV.X
 	return output;
 }

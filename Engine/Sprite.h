@@ -17,6 +17,7 @@ class Sprite
 	struct CONSTANT_BUFFER
 	{
 		XMMATRIX	matW;		//ワールド行列
+		float  scroll;
 	};
 
 	//頂点情報
@@ -51,6 +52,8 @@ public:
 	//描画
 	//引数：transform	トランスフォームクラスオブジェクト
 	void Draw(Transform& transform);
+
+	float scrollVal;
 
 	//解放
 	void Release();
