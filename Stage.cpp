@@ -37,9 +37,9 @@ Stage::~Stage()
 void Stage::Initialize()
 {
     //モデルデータのロード
-    hModel_ = Model::Load("assets/ball.fbx");
-    hGround_ = Model::Load("assets/Ground.fbx");
-    hLightBall_ = Model::Load("assets/RedBall.fbx");
+    hModel_ = Model::Load("assets/Ball.fbx");
+    hGround_ = Model::Load("assets/Water.fbx");
+    hLightBall_ = Model::Load("assets/Ball.fbx");
 
     assert(hModel_ >= 0);
     assert(hGround_ >= 0);
